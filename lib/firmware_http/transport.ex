@@ -32,6 +32,8 @@ defmodule Nerves.Firmware.HTTP.Transport do
   def json_provider(req, state) do
     {:ok, body} =
       Nerves.Firmware.state
+      |> Map.put(:version, firmware_version())
+      |> Map.put(:system, firmware_system())
       |> JSX.encode(space: 1, indent: 2)
     { body <> "\n", req, state}
   end
@@ -94,5 +96,12 @@ defmodule Nerves.Firmware.HTTP.Transport do
           {:done, new_req}
       end
     end
+  end
+
+  defp firmware_system do
+    Application.get_env(:nerves_firmware_http, :system, "unknown")
+  end
+  defp firmware_version do
+    Application.get_env(:nerves_firmware_http, :version, "unknown")
   end
 end
